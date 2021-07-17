@@ -1,10 +1,10 @@
 <h2> config your golang, with dumb </h2>
 
-```
+```Go
 go get github.com/pkdindustries/dumbconf
 ```
 
-```
+```Go
 import (
     "log"
     "os"
