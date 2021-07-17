@@ -1,7 +1,7 @@
 <h2> config your golang, with dumb </h2>
 
-```Go
-go get github.com/pkdindustries/dumbconf
+```Terminal
+> go get github.com/pkdindustries/dumbconf
 ```
 
 ```Go
@@ -19,7 +19,7 @@ var myConfig = testConf{}
 
 func main() {
     os.Setenv("ENVKEY_DB","psql:5432")
-    dumbconf.loadConfig(&myConfig)
+    dumbconf.LoadConfig(&myConfig)
     log.Printf("conf = %v", myConfig)
 }
 ```
