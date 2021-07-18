@@ -15,26 +15,35 @@
 > go get github.com/pkdindustries/dumbconf
 ```
 
+
 ```Go
+package main
+    
 import (
-    "log"
-    "os"
-    "github.com/pkdindustries/dumbconf"
+	"log"
+
+	"github.com/pkdindustries/dumbconf"
 )
 
 type testConf struct {
-    API     string  
-    DB      string `env:"ENVKEY_DB"`
-    MAYBE   string `env:"MAYBE,optional`
+	API   string
+	DB    string `env:"DBCONN"`
+	MAYBE string `env:"MAYBE,optional"`
 }
 
 var myConfig = testConf{}
 
 func main() {
-    os.Setenv("ENVKEY_DB","psql:5432")
-    os.Setenv("API","https://api4u.com/do")
-    os.Unsetenv("MAYBE")
-    dumbconf.LoadConfig(&myConfig)
-    log.Printf("conf = %v", myConfig)
+	err := dumbconf.LoadConfig(&myConfig)
+	if err == nil {
+		log.Printf("myConfig = %+v", myConfig)
+	}
 }
+```
+```Terminal
+> export DBCONN="psql:5432"
+> export API="http://api4u.com/do
+> go build test.go
+> ./test
+2021/07/17 20:56:37 conf = {API:http://api4u.com/do DB:psql:5432 MAYBE:}
 ```
