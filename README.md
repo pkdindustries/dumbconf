@@ -1,5 +1,3 @@
-<h2> If you try harder than this to load config from the environment, you should stop. You are only hurting yourself. </h2>
-<br>
 <h3> features </h3>
 <li> strings! 
 <li> env key to struct field mapping
