@@ -36,18 +36,12 @@ func LoadConfig(conf interface{}) error {
 			key = field.Name
 		} else {
 			tags := strings.Split(env, ",")
-			switch len(tags) {
-			case 1:
-				key = tags[0]
-			case 2:
-				key = tags[0]
-				if key == "" {
-					key = field.Name
-				}
+			key = tags[0]
+			if key == "" {
+				key = field.Name
+			}
+			if len(tags) > 1 {
 				opt = tags[1]
-			default:
-				log.Printf("dumbconf: malformed tag [%s]", env)
-				return &dumbError{}
 			}
 		}
 

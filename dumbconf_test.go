@@ -6,9 +6,9 @@ import (
 )
 
 type testConf struct {
-	DB    string // defaults to env:"DB,required"
+	DB    string
 	API   string `env:"APIBASE"`
-	MAYBE string `env:"MAYBE,optional"`
+	MAYBE string `env:",optional"`
 }
 
 func setTestEnv(t *testing.T) {
