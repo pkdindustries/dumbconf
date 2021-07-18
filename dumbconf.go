@@ -41,6 +41,9 @@ func LoadConfig(conf interface{}) error {
 				key = tags[0]
 			case 2:
 				key = tags[0]
+				if key == "" {
+					key = field.Name
+				}
 				opt = tags[1]
 			default:
 				log.Printf("dumbconf: malformed tag [%s]", env)
@@ -50,8 +53,8 @@ func LoadConfig(conf interface{}) error {
 
 		value, ok := os.LookupEnv(key)
 		if !ok {
-			log.Printf("dumbconf: [%s] not found", key)
-			if opt != "optional" {
+			log.Printf("dumbconf: [%s] unset", key)
+			if opt == "" {
 				return &dumbError{key}
 			}
 		}
