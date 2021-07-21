@@ -16,13 +16,13 @@ func (d *dumbError) Error() string {
 }
 
 // pass in a pointer to struct, have it populated from system environment.
-//		type Config struct {
-//			DB    string // defaults to env:"DB,required"
-//			API   string `env:"APIBASE"`
-//			MAYBE string `env:"MAYBE,optional"`
-//		}
-// 		var c = Config{}
-//		err := dumbconf.LoadConfig(&c)
+//	type Config struct {
+//		DB    string
+//		API   string `env:"APIBASE"`
+//		MAYBE string `env:"MAYBE,optional"`
+//	}
+// 	var c = Config{}
+//	err := dumbconf.LoadConfig(&c)
 func LoadConfig(conf interface{}) error {
 	mirror := reflect.ValueOf(conf)
 	typeof := mirror.Elem().Type()
