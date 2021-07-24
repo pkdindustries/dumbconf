@@ -39,9 +39,17 @@ func main() {
 }
 ```
 ```Terminal
-> export DBCONN="psql:5432"
-> export API="http://api4u.com/do
 > go build test.go
-> ./test
-2021/07/17 20:56:37 conf = {API:http://api4u.com/do DB:psql:5432 MAYBE:}
+> DBCONN="psql:5432" API="http://api4u.com/do" ./test
+2021/07/17 20:56:37 myConfig = {API:http://api4u.com/do DB:psql:5432 MAYBE:}
+> ./test -h
+usage of: ./test
+  -api string
+    
+  -dbconn string
+    
+  -maybe string
+
+> DBCONN="psql:5432" ./test -api "http://api4u.com/do" -maybe yes
+2021/07/24 00:46:04 myConfig = {API:http DB:wewe MAYBE:yes}
 ```

@@ -7,7 +7,7 @@ import (
 
 type testConf struct {
 	DB    string
-	API   string `env:"APIBASE"`
+	API   string `env:"APIBASE" help:"the api endpoint"`
 	MAYBE string `env:",optional"`
 }
 
@@ -25,7 +25,7 @@ func setTestEnv(t *testing.T) {
 func TestLoadEnv(t *testing.T) {
 	setTestEnv(t)
 	conf := testConf{}
-	err := LoadConfig(&conf)
+	err := populate(&conf, false)
 	if err != nil {
 		t.Fatalf("error should be nil: %v", err)
 	}
@@ -44,7 +44,7 @@ func TestLoadEnvMissingOptionalVar(t *testing.T) {
 	setTestEnv(t)
 	os.Unsetenv("MAYBE")
 	conf := testConf{}
-	err := LoadConfig(&conf)
+	err := populate(&conf, false)
 	if err != nil {
 		t.Fatalf("error should be nil: %v", err)
 	}
@@ -54,7 +54,7 @@ func TestLoadEnvMissingRequiredVar(t *testing.T) {
 	setTestEnv(t)
 	os.Unsetenv("APIBASE")
 	conf := testConf{}
-	err := LoadConfig(&conf)
+	err := populate(&conf, false)
 	if err == nil {
 		t.Fatalf("unset env but no error")
 	} else if err.Error() != "APIBASE" {
