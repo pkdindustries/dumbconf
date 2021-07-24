@@ -32,7 +32,7 @@ type testConf struct {
 var myConfig = testConf{}
 
 func main() {
-	err := dumbconf.LoadConfig(&myConfig)
+	err := dumbconf.Populate(&myConfig)
 	if err == nil {
 		log.Printf("myConfig = %+v", myConfig)
 	}
