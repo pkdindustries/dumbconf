@@ -25,8 +25,8 @@ import (
 
 type testConf struct {
 	API   string
-	DB    string `env:"DBCONN"`
-	MAYBE string `env:"MAYBE,optional"`
+	DB    string `key:"DBCONN"`
+	MAYBE string `key:",optional"`
 }
 
 var myConfig = testConf{}
@@ -46,10 +46,10 @@ func main() {
 usage of: ./test
   -api string
     
-  -dbconn string
+  -db string
     
   -maybe string
 
 > DBCONN="psql:5432" ./test -api "http://api4u.com/do" -maybe yes
-2021/07/24 00:46:04 myConfig = {API:http DB:wewe MAYBE:yes}
+2021/07/24 00:46:04 myConfig = {API:http://api4u.com/do DB:psql:5432 MAYBE:yes}
 ```

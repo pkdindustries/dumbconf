@@ -7,8 +7,8 @@ import (
 
 type testConf struct {
 	DB    string
-	API   string `env:"APIBASE" help:"the api endpoint"`
-	MAYBE string `env:",optional"`
+	API   string `key:"APIBASE"`
+	MAYBE string `key:",optional"`
 }
 
 func setTestEnv(t *testing.T) {

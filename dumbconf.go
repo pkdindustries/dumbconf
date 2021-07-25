@@ -12,29 +12,43 @@ import (
 // user supplied struct with tags
 //	type DumbConfig struct {
 //		DB    string
-//		API   string `env:"APIBASE"`
-//		MAYBE string `env:"MAYBE,optional"`
+//		API   string `key:"APIBASE"`
+//		MAYBE string `key:"MAYBE,optional"`
 //	}
-type DumbStruct interface{}
+type dumbStruct interface{}
 
 // extracted metadata from the dumb struct
-type ConfigMap map[string]*ConfigVar
-type ConfigVar struct {
+type dumbMap map[string]*configVar
+type configVar struct {
 	Key       string
 	Value     string
 	FlagValue string
 	Optional  bool
 }
 
+// pass in a pointer to struct, have it populated from system environment
+// and command line flags, defaulted to field name, or via 'key' tag
+//	type Config struct {
+//		DB    string
+//		API   string `key:"APIBASE"`
+//		MAYBE string `key:"MAYBE,optional"`
+//	}
+// 	var c = Config{}
+//	err := dumbconf.Populate(&c)
+func Populate(dumb dumbStruct) error {
+	return populate(dumb, true)
+}
+
 // reflects on the conf struct, parses args and creates a map
-func createMap(conf DumbStruct) ConfigMap {
-	c := make(ConfigMap)
-	mirror := reflect.ValueOf(conf)
+// of ConfigVar
+func createMap(dumb dumbStruct) dumbMap {
+	c := make(dumbMap)
+	mirror := reflect.ValueOf(dumb)
 	typeof := mirror.Elem().Type()
 	for i := 0; i < typeof.NumField(); i++ {
 		field := typeof.Field(i)
-		cfg := &ConfigVar{}
-		env, ok := field.Tag.Lookup("env")
+		cfg := &configVar{}
+		env, ok := field.Tag.Lookup("key")
 		if !ok {
 			cfg.Key = field.Name
 		} else {
@@ -57,9 +71,9 @@ func createMap(conf DumbStruct) ConfigMap {
 }
 
 // merges flag and env values, writes struct
-func (c ConfigMap) unmarshall(conf DumbStruct) error {
+func (c dumbMap) unmarshall(dumb dumbStruct) error {
 	for fieldname := range c {
-		f := reflect.ValueOf(conf).Elem().FieldByName(fieldname)
+		f := reflect.ValueOf(dumb).Elem().FieldByName(fieldname)
 		if f.CanSet() {
 			cfg := c[fieldname]
 			value := cfg.FlagValue
@@ -78,7 +92,7 @@ func (c ConfigMap) unmarshall(conf DumbStruct) error {
 }
 
 // read flag values into config
-func (c ConfigMap) readFlags() {
+func (c dumbMap) readFlags() {
 	flags := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 	flags.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), "usage of: %s\n", os.Args[0])
@@ -86,14 +100,14 @@ func (c ConfigMap) readFlags() {
 	}
 	for k := range c {
 		cfg := c[k]
-		flagname := strings.ToLower(cfg.Key)
+		flagname := strings.ToLower(k)
 		flags.StringVar(&cfg.FlagValue, flagname, "", "")
 	}
 	flags.Parse(os.Args[1:])
 }
 
 // read environment values into config
-func (c ConfigMap) readEnv() {
+func (c dumbMap) readEnv() {
 	for k := range c {
 		cfg := c[k]
 		value, _ := os.LookupEnv(cfg.Key)
@@ -101,15 +115,9 @@ func (c ConfigMap) readEnv() {
 	}
 }
 
-// pass in a pointer to struct, have it populated from system environment.
-//	type Config struct {
-//		DB    string
-//		API   string `env:"APIBASE"`
-//		MAYBE string `env:"MAYBE,optional"`
-//	}
-// 	var c = Config{}
-//	err := dumbconf.Populate(&c)
-func populate(dumb DumbStruct, flags bool) error {
+// create config, merge flags>env .. push back into
+// user's struct
+func populate(dumb dumbStruct, flags bool) error {
 	cfgmap := createMap(dumb)
 	cfgmap.readEnv()
 	if flags {
@@ -117,8 +125,4 @@ func populate(dumb DumbStruct, flags bool) error {
 	}
 	err := cfgmap.unmarshall(dumb)
 	return err
-}
-
-func Populate(dumb DumbStruct) error {
-	return populate(dumb, true)
 }
