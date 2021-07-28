@@ -81,7 +81,7 @@ func (c dumbMap) unmarshall(dumb dumbStruct) error {
 				value = cfg.Value
 			}
 			if value == "" && !cfg.Optional {
-				return errors.New(cfg.Key)
+				return fmt.Errorf("missing config: %s", c.missingKeys())
 			}
 			f.SetString(value)
 		} else {
@@ -89,6 +89,16 @@ func (c dumbMap) unmarshall(dumb dumbStruct) error {
 		}
 	}
 	return nil
+}
+
+func (c dumbMap) missingKeys() []string {
+	ks := []string{}
+	for f := range c {
+		if !c[f].Optional && c[f].Value == "" && c[f].FlagValue == "" {
+			ks = append(ks, c[f].Key)
+		}
+	}
+	return ks
 }
 
 // read flag values into config

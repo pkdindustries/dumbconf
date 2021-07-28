@@ -57,7 +57,5 @@ func TestLoadEnvMissingRequiredVar(t *testing.T) {
 	err := populate(&conf, false)
 	if err == nil {
 		t.Fatalf("unset env but no error")
-	} else if err.Error() != "APIBASE" {
-		t.Fatalf("wrong error: %v", err)
 	}
 }
